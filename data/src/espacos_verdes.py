@@ -1,10 +1,20 @@
 # baixar os dados ainda!!!
 
-
+from pathlib import Path
 import geopandas as gpd
 
-edges = gpd.read_file("data/raw/osm/edges_guimaraes.geojson")
-verdes = gpd.read_file("data/raw/websig/espacos_verdes.geojson")
+BASE_PATH = Path(__file__).resolve().parents[1]
+edges_file = BASE_PATH / "raw" / "osm" / "edges_guimaraes.geojson"
+verdes_file = BASE_PATH / "raw" / "websig" / "espacos_verdes.geojson"
+
+if not verdes_file.exists():
+    raise FileNotFoundError(
+        f"Ficheiro não encontrado: {verdes_file}\n" \
+        "Por favor coloque o arquivo espacos_verdes.geojson em data/raw/websig/ "
+    )
+
+edges = gpd.read_file(edges_file)
+verdes = gpd.read_file(verdes_file)
 
 edges = edges.to_crs(3763)
 verdes = verdes.to_crs(3763)

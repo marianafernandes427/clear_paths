@@ -5,6 +5,8 @@ import folium
 import time
 from streamlit.components.v1 import html
 
+from data.src.qualidade_ar import custo_poluicao, qualidade
+from data.src.ruido import custo_ruido
 
 st.set_page_config(
     page_title="Clear Paths Guimarães",
@@ -73,7 +75,12 @@ def aplicar_custos(G, perfil, condicao):
     for u, v, k, data in G.edges(keys=True, data=True):
         distancia = data.get("length", 1)
 
-        custo = distancia
+        #custo = distancia
+        custo = (
+            distancia
+            + custo_ruido(data)
+            + custo_poluicao(data, qualidade)
+        )
 
         highway = data.get("highway", "")
         surface = data.get("surface", "")

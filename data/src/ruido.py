@@ -11,3 +11,6 @@ def custo_ruido(row):
         return 5
     else:
         return 10
+    
+print("Ruído primary:", custo_ruido({"highway": "primary"}))
+print("Ruído footway:", custo_ruido({"highway": "footway"}))    

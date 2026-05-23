@@ -1,8 +1,12 @@
 import pandas as pd
+from pathlib import Path
 
-ar = pd.read_excel("data/raw/qualidade_ar/qualidade_ar_2024.xlsx")
+EXCEL_PATH = Path(__file__).resolve().parents[1] / "raw" / "qualidade_ar_2024.xlsx"
 
+ar = pd.read_excel(EXCEL_PATH)
 print(ar.head())
+print(ar.columns)
+
 
 # função custo
 def condicao_qualidade_ar(valor_pm10):
@@ -12,7 +16,11 @@ def condicao_qualidade_ar(valor_pm10):
         return "media"
     else:
         return "boa"
-    
+
+pm10_medio = ar["Partículas < 10 µm (µg/m3)"].mean()
+print(pm10_medio)
+qualidade = condicao_qualidade_ar(pm10_medio)
+#print("Qualidade do ar:", qualidade)    
 
 # pôr no grafo
 def custo_poluicao(row, qualidade_ar):
@@ -30,3 +38,12 @@ def custo_poluicao(row, qualidade_ar):
         if highway in ["primary", "secondary", "tertiary"]:
             return 60
         return 20
+
+def aplicar_custo_ar_grafo(G):
+    for u, v, k, data in G.edges(keys=True, data=True):
+
+        custo_extra = custo_poluicao(data, qualidade)
+
+        data["custo_ar"] = custo_extra
+
+    return G
